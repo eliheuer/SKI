@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-glyphsSource="ski"
-outputDir="fonts/VF"
+glyphsSource="SKI"
+outputDir="fonts/variable"
 familyName="SKI"
 
 echo "[INFO] Starting build script for $familyName font family"
@@ -33,23 +33,28 @@ echo "[INFO] Removing build directories"
 rm -rf instance_ufo master_ufo
 
 echo "[INFO] Fixing DSIG table"
-if gftools fix-dsig -f fonts/vf/$familyName-VF.ttf ; then
+if gftools fix-dsig -f $outputDir/$familyName-VF.ttf ; then
   echo "[INFO] DSIG fixed"
 else
   echo "[ERROR] GFtools is not working, please update or install: https://github.com/googlefonts/gftools"
 fi
 
 echo "[INFO] Autohinting with ttfautohint"
-if ttfautohint fonts/vf/$familyName-VF.ttf fonts/vf/$familyName-VF-FIX.ttf ; then
+if ttfautohint $outputDir/$familyName-VF.ttf $outputDir/$familyName-VF-FIX.ttf ; then
   echo "[INFO] Autohinting completed"
   echo "[INFO] Replacing unhinted fonts with hinted fonts"
-  mv fonts/vf/$familyName-VF-FIX.ttf fonts/vf/$familyName-VF.ttf 
+  mv $outputDir/$familyName-VF-FIX.ttf $outputDir/$familyName-VF.ttf 
   echo "[INFO] Fixing hinting with GFtools"
-  gftools fix-hinting fonts/vf/$familyName-VF.ttf
-  mv fonts/vf/$familyName-VF.ttf.fix fonts/vf/$familyName-VF.ttf
+  gftools fix-hinting $outputDir/$familyName-VF.ttf
+  mv $outputDir/$familyName-VF.ttf.fix $outputDir/$familyName-VF.ttf
 else
   echo "[ERROR] ttfautohint is not working, please update or install: https://www.freetype.org/ttfautohint/"
 fi
+
+
+#echo "[INFO] Running DrawBot"
+#python3 docs/drawbot/specimen-001.py
+#echo "[INFO] Done running DrawBot"
 
 # echo "[INFO] Running fix-name-table.py"
 # python3 sources/scripts/helpers/fix-name-table.py fonts/vf/$familyName-VF.ttf
